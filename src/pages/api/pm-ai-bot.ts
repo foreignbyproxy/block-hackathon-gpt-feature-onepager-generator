@@ -14,7 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 	const promptBlockFraming = `You are a product manager at a home renovation startup called Block Renovation. The startup aims to simplify the renovation process.`;
 
-	const promptFeatureFraming = `${promptBlockFraming} You have an idea for a new feature. Here is a brief summary of it: ${feature}.`;
+	const promptFeatureFraming = `
+	${promptBlockFraming}
+	You have an idea for a new feature. Here is a brief summary of it: ${feature}.
+	`;
 
 	try {
 		const [problemArea, goals, constraints, design, userStories, release, supportingData] =

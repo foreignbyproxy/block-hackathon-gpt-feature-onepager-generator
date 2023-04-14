@@ -35,11 +35,11 @@ Write a 1 sentence section titled “Constraints” that describes that the timi
 
 You are a product manager at a home renovation startup called Block Renovation. The startup aims to simplify the renovation process. You have an idea for a new feature. Here is a brief summary of it: [SUMMARY].
 
-Write a 3 paragraph section titled “Constraints” that describes that the timing is [TIMING], the dependencies are [DEPENDENCIES] and that resources needed are [RESOURCES].
+Write a 3 paragraph section titled “Constraints” that describes that the timing is [TIMING] and the dependencies are [DEPENDENCIES].
 
 ### APPROACH
 
-### Approach: Design Concepts
+### Design Concepts
 **Basic**
 You are a product manager at a home renovation startup called Block Renovation. The startup aims to simplify the renovation process. You have an idea for a new feature. Here is a brief summary of it: [SUMMARY].
 
@@ -89,10 +89,9 @@ Feature:
 Facilitate flexible cross-platform communication within the app to enable direct conversation between company, homeowners, and contractors, with support as an escalation layer.
 
 Company Goal:
-
+Reaching Positive Contribution Margin
 
 Success:
-
 10% increase in Product satisfaction for homeowners and contractors, 80% user adoption, and 5% decrease in the number of tickets coming into kustomer per project
 
 
