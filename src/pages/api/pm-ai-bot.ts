@@ -10,7 +10,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<APIData>) {
-	const { feature, goal, success, timing, dependencies, advanceMode } = JSON.parse(req.body);
+	const { feature, goal, success, timing, dependencies, title, advanceMode } = req.body;
 
 	const promptBlockFraming = `You are a product manager at a home renovation startup called Block Renovation. The startup aims to simplify the renovation process.`;
 
@@ -32,6 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 			]);
 
 		res.status(200).json({
+			title,
 			problemArea,
 			goals,
 			constraints,
