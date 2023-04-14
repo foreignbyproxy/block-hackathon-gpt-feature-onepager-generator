@@ -1,12 +1,9 @@
 import { useState } from "react";
-
+import * as Yup from "yup";
 import Head from "next/head";
-import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { useFormik } from "formik";
 import { BeatLoader } from "react-spinners";
-
-const inter = Inter({ subsets: ["latin"] });
 
 import {
 	Heading,
@@ -19,27 +16,42 @@ import {
 	VStack,
 	Select,
 	Switch,
+	Badge,
+	ButtonGroup,
 } from "@chakra-ui/react";
 
-type RawData = {
-	problemArea: string;
+import { APIData } from "@/common/types";
+
+const defaultDataValue: APIData = {
+	problemArea: "",
+	goals: "",
+	constraints: "",
+	design: "",
+	userStories: "",
+	release: "",
+	supportingData: "",
 };
 
-const defaultValue = {
-	problemArea: "",
-};
+const validationSchema = Yup.object().shape({
+	feature: Yup.string().required("Required"),
+});
 
 export default function Home() {
-	const [rawData, setRawData] = useState<RawData>(defaultValue);
+	const [rawData, setRawData] = useState<APIData>(defaultDataValue);
+	const [error, setError] = useState<string | null>(null);
 
 	const formik = useFormik({
 		initialValues: {
 			advanceMode: false,
-			feature: "",
-			goal: "",
-			success: "",
-			dependencies: "",
+			feature:
+				"Facilitate flexible cross-platform communication within the app to enable direct conversation between company, homeowners, and contractors, with support as an escalation layer.",
+			goal: "Reaching Positive Contribution Margin",
+			success:
+				"10% increase in Product satisfaction for homeowners and contractors, 80% user adoption, and 5% decrease in the number of tickets coming into kustomer per project",
+			dependencies: "Using the existing NextJS application",
+			timing: "the sprint starting on the 11th to the 25th of April",
 		},
+		validationSchema: validationSchema,
 		onSubmit: (values, formik) => {
 			fetch("/api/pm-ai-bot", {
 				method: "POST",
@@ -49,6 +61,11 @@ export default function Home() {
 				.then((data) => {
 					setRawData(data);
 					console.log(data);
+					formik.setSubmitting(false);
+				})
+				.catch((error) => {
+					setError("PM AI Bot could not generate one-pager");
+					console.log(error);
 					formik.setSubmitting(false);
 				});
 		},
@@ -73,7 +90,8 @@ export default function Home() {
 						idea or feature, which Company Goal it fits into, the definition of success,
 						timing for launch, and key dependencies.
 					</Text>
-					<Box display="grid" gridTemplateColumns="1fr 2fr">
+					{error && <Badge colorScheme="red">{error}</Badge>}
+					<Box display="grid" gridTemplateColumns="1fr 2fr" gap={8}>
 						<VStack alignItems={"flex-start"} maxW={960} gap={4}>
 							<VStack w="100%" maxW={480} alignItems={"flex-start"}>
 								<form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
@@ -121,6 +139,7 @@ export default function Home() {
 									<FormControl mb={4}>
 										<FormLabel>Definition of Success</FormLabel>
 										<Textarea
+											minHeight="200px"
 											id="success"
 											name="success"
 											onChange={formik.handleChange}
@@ -138,30 +157,104 @@ export default function Home() {
 										/>
 									</FormControl>
 
-									<Button
-										type="submit"
-										disabled={formik.isSubmitting}
-										isLoading={formik.isSubmitting}
-										spinnerPlacement="end"
-										loadingText="Submitting"
-									>
-										Submit
-									</Button>
+									<FormControl mb={4}>
+										<FormLabel>Timing</FormLabel>
+										<Textarea
+											id="timing"
+											name="timing"
+											onChange={formik.handleChange}
+											value={formik.values.timing}
+										/>
+									</FormControl>
+
+									<ButtonGroup>
+										<Button
+											type="submit"
+											disabled={formik.isSubmitting}
+											isLoading={formik.isSubmitting}
+											spinnerPlacement="end"
+											loadingText="Submitting"
+										>
+											Submit
+										</Button>
+										<Button type="button" onClick={() => formik.resetForm()}>
+											Reset
+										</Button>
+									</ButtonGroup>
 								</form>
 							</VStack>
 						</VStack>
 						<VStack alignItems={"flex-start"}>
-							<Heading>Problem Area</Heading>
-							{rawData.problemArea.split("\n\n").map((text, index) => (
-								<Text key={`pa-paragraph-${index}`} mb={4}>
-									{text}
-								</Text>
-							))}
+							{rawData.problemArea && (
+								<>
+									<Heading>Problem Area</Heading>
+									{rawData.problemArea.split("\n\n").map((text, index) => (
+										<Text key={`pa-paragraph-${index}`} mb={4}>
+											{text}
+										</Text>
+									))}
+								</>
+							)}
+							{rawData.goals && (
+								<>
+									<Heading>Goals</Heading>
+									{rawData.goals.split("\n\n").map((text, index) => (
+										<Text key={`g-paragraph-${index}`} mb={4}>
+											{text}
+										</Text>
+									))}
+								</>
+							)}
+							{rawData.constraints && (
+								<>
+									<Heading>Constraints</Heading>
+									{rawData.constraints.split("\n\n").map((text, index) => (
+										<Text key={`c-paragraph-${index}`} mb={4}>
+											{text}
+										</Text>
+									))}
+								</>
+							)}
+							{rawData.design && (
+								<>
+									<Heading>Design Concept</Heading>
+									{rawData.design.split("\n\n").map((text, index) => (
+										<Text key={`d-paragraph-${index}`} mb={4}>
+											{text}
+										</Text>
+									))}
+								</>
+							)}
+							{rawData.userStories && (
+								<>
+									<Heading>User Stories</Heading>
+									<Box
+										pl={4}
+										dangerouslySetInnerHTML={{ __html: rawData.userStories }}
+									/>
+								</>
+							)}
+							{rawData.release && (
+								<>
+									<Heading>Release Strategy</Heading>
+									{rawData.release.split("\n\n").map((text, index) => (
+										<Text key={`r-paragraph-${index}`} mb={4}>
+											{text}
+										</Text>
+									))}
+								</>
+							)}
+							{rawData.supportingData && (
+								<>
+									<Heading>Supporting Data</Heading>
+									<Box
+										pl={4}
+										dangerouslySetInnerHTML={{ __html: rawData.supportingData }}
+									/>
+								</>
+							)}
 						</VStack>
 					</Box>
-				</Box>
-				<Box maxW={960}>
-					<pre style={{ textWrap: "wrap" }}>{JSON.stringify(rawData, null, 4)}</pre>
 				</Box>
 			</main>
 		</>
