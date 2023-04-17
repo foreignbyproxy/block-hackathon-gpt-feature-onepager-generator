@@ -20,10 +20,16 @@ import {
 	Badge,
 	ButtonGroup,
 	Input,
+	HStack,
 } from "@chakra-ui/react";
 import { BeatLoader } from "react-spinners";
 
-import { getGPTResponse, getNotionAccessToken, sendPageDataToNotion } from "@/common/utils";
+import {
+	getGPTResponse,
+	getNotionAccessToken,
+	sendPageDataToNotion,
+	formatNotionPageId,
+} from "@/common/utils";
 import { sections } from "@/common/consts";
 
 import { APIData, NotionResponse, SectionKeys } from "@/common/types";
@@ -50,6 +56,7 @@ export default function Home() {
 	const router = useRouter();
 	const [isSendingToNotion, setIsSendingToNotion] = useState<boolean>(false);
 	const [rawData, setRawData] = useState<APIData>(defaultDataValue);
+	const [pageId, setPageId] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 	const [notionResponse, setNotionToken] = useState<NotionResponse | null>(() => {
@@ -72,8 +79,8 @@ export default function Home() {
 			goal: "Reaching Positive Contribution Margin",
 			success:
 				"10% increase in Product satisfaction for homeowners and contractors, 80% user adoption, and 5% decrease in the number of tickets coming into kustomer per project",
-			dependencies: "Using the existing NextJS application",
-			timing: "the sprint starting on the 11th to the 25th of April",
+			dependencies: "The feature should be implemented using our NextJS application.",
+			timing: "The feature should be finished by the end of the month.",
 		},
 		validationSchema: validationSchema,
 		onSubmit: (values, formik) => {
@@ -120,14 +127,21 @@ export default function Home() {
 
 	function sendDataToNotion() {
 		setIsSendingToNotion(true);
-		sendPageDataToNotion(rawData)
+		setError(null);
+		setSuccess(null);
+
+		if (!pageId) {
+			setError("Need to add Page ID");
+			setIsSendingToNotion(false);
+			return;
+		}
+
+		sendPageDataToNotion(rawData, formatNotionPageId(pageId))
 			.then(() => {
-				debugger;
 				setSuccess("Data added to Notion");
 				setIsSendingToNotion(false);
 			})
 			.catch((error) => {
-				debugger;
 				setError("Failed to add page to Notion");
 				setIsSendingToNotion(false);
 			});
@@ -162,9 +176,22 @@ export default function Home() {
 							</Button>
 						)}
 						{notionResponse && isFilled(rawData) && (
-							<Button isLoading={isSendingToNotion} onClick={sendDataToNotion}>
-								Add to Notion
-							</Button>
+							<HStack w="640px" gap={4}>
+								<Button isLoading={isSendingToNotion} onClick={sendDataToNotion}>
+									Add to Notion
+								</Button>
+								<FormControl mb={4}>
+									<Input
+										placeholder="Insert Parent Page ID"
+										id="pageId"
+										name="pageId"
+										onChange={(e) => {
+											setPageId(e.currentTarget.value);
+										}}
+										value={pageId}
+									/>
+								</FormControl>
+							</HStack>
 						)}
 						{error && <Badge colorScheme="red">{error}</Badge>}
 						{success && <Badge colorScheme="green">{success}</Badge>}

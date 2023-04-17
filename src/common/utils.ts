@@ -32,7 +32,7 @@ export function getNotionAccessToken(
 	}).then((res) => res.json());
 }
 
-export function sendPageDataToNotion(data: APIData) {
+export function sendPageDataToNotion(data: APIData, pageId: string) {
 	let notion = getNotionDataFromLocalStorage();
 
 	if (!notion) {
@@ -49,6 +49,17 @@ export function sendPageDataToNotion(data: APIData) {
 		body: JSON.stringify({
 			token: notion.access_token,
 			data,
+			pageId,
 		}),
 	}).then((res) => res.json());
+}
+
+export function formatNotionPageId(pageId: string) {
+	const seg1 = pageId.substring(0, 8);
+	const seg2 = pageId.substring(8, 12);
+	const seg3 = pageId.substring(12, 16);
+	const seg4 = pageId.substring(16, 20);
+	const seg5 = pageId.substring(20);
+
+	return `${seg1}-${seg2}-${seg3}-${seg4}-${seg5}`;
 }

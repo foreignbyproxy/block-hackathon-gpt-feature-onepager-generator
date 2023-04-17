@@ -16,6 +16,7 @@
     "@types/node": "18.15.11",
     "@types/react": "18.0.35",
     "@types/react-dom": "18.0.11",
+    "cheerio": "^1.0.0-rc.12",
     "formik": "^2.2.9",
     "framer-motion": "^10.12.1",
     "install": "^0.13.0",
